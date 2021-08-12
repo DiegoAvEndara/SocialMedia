@@ -2,11 +2,13 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using SocialMedia.Core.Interfaces;
+using SocialMedia.Infraestructure.Data;
 using SocialMedia.Infraestructure.Repositories;
 using System;
 using System.Collections.Generic;
@@ -28,8 +30,11 @@ namespace Social_Media.Api
     public void ConfigureServices(IServiceCollection services)
     {
       services.AddControllers();
-      //Injección de dependencias (PostRepository o PostMongoRepository)
-      services.AddTransient<IPostRepository, PostMongoRepository>();
+      //Creamos otro servicio para conectarnos dierectamente a la base de datos de sqlserver a paratir del appsettings.json
+      services.AddDbContext<SocialMediaContext>(options =>
+        options.UseSqlServer(Configuration.GetConnectionString("SocialMedia")));
+      //Injección de dependencias (PostRepository o PostMongoRepository), indica que 
+      services.AddTransient<IPostRepository, PostRepository>();
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -1,5 +1,7 @@
-﻿using SocialMedia.Core.Entities;
+﻿using Microsoft.EntityFrameworkCore;
+using SocialMedia.Core.Entities;
 using SocialMedia.Core.Interfaces;
+using SocialMedia.Infraestructure.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +12,11 @@ namespace SocialMedia.Infraestructure.Repositories
 {
   public class PostRepository : IPostRepository
   {
-    public async Task<IEnumerable<Post>> GetPosts()
+    private readonly SocialMediaContext _context;
+    public PostRepository (SocialMediaContext context) {
+      _context = context;
+    }
+    /*public async Task<IEnumerable<Post>> GetPosts()
     {
       var posts = Enumerable.Range(1, 10).Select(x => new Post
       {
@@ -21,6 +27,11 @@ namespace SocialMedia.Infraestructure.Repositories
         UserId = x*2
       });
       await Task.Delay(10);
+      return posts;
+    }*/
+    public async Task<IEnumerable<Publicacion>> GetPosts()
+    {
+      var posts = await _context.Publicacion.ToListAsync();
       return posts;
     }
   }
