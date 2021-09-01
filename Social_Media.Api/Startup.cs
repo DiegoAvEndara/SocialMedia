@@ -29,8 +29,12 @@ namespace Social_Media.Api
     // This method gets called by the runtime. Use this method to add services to the container.
     public void ConfigureServices(IServiceCollection services)
     {
-      services.AddControllers();
-      //Creamos otro servicio para conectarnos dierectamente a la base de datos de sqlserver a paratir del appsettings.json
+      services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+      services.AddControllers().AddNewtonsoftJson(options =>
+      {
+        options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+      });
+      //Creamos otro servicio para conectarnos directamente a la base de datos de sqlserver a paratir del appsettings.json
       services.AddDbContext<SocialMediaContext>(options =>
         options.UseSqlServer(Configuration.GetConnectionString("SocialMedia")));
       //Injección de dependencias (PostRepository o PostMongoRepository), indica que 

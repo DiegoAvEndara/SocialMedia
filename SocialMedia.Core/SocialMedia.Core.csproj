@@ -6,8 +6,11 @@
 
   <ItemGroup>
     <Folder Include="Enumerators\" />
-    <Folder Include="DTOs\" />
     <Folder Include="Exceptions\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.18" />
   </ItemGroup>
 
 </Project>
