@@ -17,6 +17,12 @@ namespace SocialMedia.Infraestructure.Data.Configuration
       builder.Property(e => e.UserId)
         .HasColumnName("IdUsuario");
 
+      builder.Property(e => e.FirstName)
+        .HasColumnName("Nombres")
+        .IsRequired()
+        .HasMaxLength(50)
+        .IsUnicode(false);
+
       builder.Property(e => e.LastName)
         .HasColumnName("Apellidos")
         .IsRequired()
@@ -32,16 +38,13 @@ namespace SocialMedia.Infraestructure.Data.Configuration
         .HasColumnName("FechaNacimiento")
         .HasColumnType("date");
 
-      builder.Property(e => e.FirstName)
-        .HasColumnName("Nombres")
-        .IsRequired()
-        .HasMaxLength(50)
-        .IsUnicode(false);
-
       builder.Property(e => e.Phone)
         .HasColumnName("Telefono")
         .HasMaxLength(10)
         .IsUnicode(false);
+      builder.Property(e => e.IsActive)
+       .HasColumnName("Activo")
+       .HasColumnType("bool");
     }
   }
 }

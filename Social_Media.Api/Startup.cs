@@ -9,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using SocialMedia.Core.Interfaces;
+using SocialMedia.Core.Services;
 using SocialMedia.Infraestructure.Data;
 using SocialMedia.Infraestructure.Filters;
 using SocialMedia.Infraestructure.Repositories;
@@ -46,6 +47,8 @@ namespace Social_Media.Api
         options.UseSqlServer(Configuration.GetConnectionString("SocialMedia")));
       //Injección de dependencias (PostRepository o PostMongoRepository), indica que 
       services.AddTransient<IPostRepository, PostRepository>();
+      services.AddTransient<IPostService, PostService>();
+      services.AddTransient<IUserRepository, UserRepository>();
       services.AddMvc(options =>
       {
         options.Filters.Add<ValidationFilter>();

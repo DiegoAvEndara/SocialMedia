@@ -25,10 +25,8 @@ namespace SocialMedia.Infraestructure.Data.Configuration
       builder.Property(e => e.UserId)
         .HasColumnName("IdUsuario");
 
-      builder.Property(e => e.IsActive)
-        .HasColumnName("Activo");
-
       builder.Property(e => e.Description)
+        .HasColumnName("Descripcion")
         .IsRequired()
         .HasMaxLength(500)
         .IsUnicode(false);
@@ -36,6 +34,9 @@ namespace SocialMedia.Infraestructure.Data.Configuration
       builder.Property(e => e.Date)
         .HasColumnName("Fecha")
         .HasColumnType("datetime");
+
+      builder.Property(e => e.IsActive)
+        .HasColumnName("Activo");
 
       builder.HasOne(d => d.Post)
         .WithMany(p => p.Comments)

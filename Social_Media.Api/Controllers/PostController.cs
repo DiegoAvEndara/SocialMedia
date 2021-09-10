@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Social_Media.Api.Responses;
 using SocialMedia.Core.DTOs;
 using SocialMedia.Core.Entities;
 using SocialMedia.Core.Interfaces;
@@ -16,17 +17,17 @@ namespace Social_Media.Api.Controllers
   [ApiController]
   public class PostController : ControllerBase
   {
-    public readonly IPostRepository _postRepository;
+    public readonly IPostService _postService;
     private readonly IMapper _mapper;
-    public PostController(IPostRepository postRepository, IMapper mapper)
+    public PostController(IPostService postService, IMapper mapper)
     {
-      this._postRepository = postRepository;
+      this._postService = postService;
       this._mapper = mapper;
     }
     [HttpGet]
     public async Task<IActionResult> GetPosts()
     {
-      var posts = await _postRepository.GetPosts();
+      var posts = await _postService.GetPosts();
       /*var postsDto = posts.Select(x => new PostDto
       {
         PostId = x.PostId,
@@ -36,12 +37,13 @@ namespace Social_Media.Api.Controllers
         UserId = x.UserId
       });*/
       var postsDto = _mapper.Map<IEnumerable<PostDto>>(posts);
-      return Ok(postsDto);
+      var response = new ApiResponse<IEnumerable<PostDto>>(postsDto);
+      return Ok(response);
     }
     [HttpGet("{id}")]
-    public async Task<IActionResult> GetPosts(int id)
+    public async Task<IActionResult> GetPost(int id)
     {
-      var post = await _postRepository.GetPost(id);
+      var post = await _postService.GetPost(id);
       /*var postDto = new PostDto
       {
         PostId = post.PostId,
@@ -50,8 +52,9 @@ namespace Social_Media.Api.Controllers
         Image = post.Image,
         UserId = post.UserId
       };*/
-      var postDto = _mapper.Map<IEnumerable<PostDto>>(post);
-      return Ok(postDto);
+      var postDto = _mapper.Map<PostDto>(post);
+      var response = new ApiResponse<PostDto>(postDto);
+      return Ok(response);
 
     }
     [HttpPost]
@@ -73,8 +76,26 @@ namespace Social_Media.Api.Controllers
       }*/
       var newPost = _mapper.Map<Post>(postDto);
       //Cambiamos Post por PostDto para cambiar la clase a la que hace referencia
-      await _postRepository.InsertPost(newPost);
-      return Ok(newPost);
+      await _postService.InsertPost(newPost);
+      postDto = _mapper.Map<PostDto>(newPost);
+      var response = new ApiResponse<PostDto>(postDto);
+      return Ok(response);
+    }
+    [HttpPut]
+    public async Task<IActionResult> Put (int id, PostDto postDto)
+    {
+      var post = _mapper.Map<Post>(postDto);
+      post.PostId = id;
+      var result = await _postService.UpdatePost(post);
+      var response = new ApiResponse<bool>(result);
+      return Ok(response);
+    }
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(int id)
+    {
+      var result = await _postService.DeletePost(id);
+      var response = new ApiResponse<bool>(result);
+      return Ok(response);
     }
   }
 }
