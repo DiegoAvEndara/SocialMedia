@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+//Este repositorio está eliminado pero se lo mantiene por propósitos de enseñanza, el repositorio general de ambos es el BaseRepository
 namespace SocialMedia.Infraestructure.Repositories
 {
   public class PostRepository : IPostRepository
@@ -36,7 +36,7 @@ namespace SocialMedia.Infraestructure.Repositories
     }
     public async Task<Post> GetPost(int id)
     {
-      var post = await _context.Posts.FirstOrDefaultAsync(a=>a.PostId==id);
+      var post = await _context.Posts.FirstOrDefaultAsync(a=>a.Id ==id);
       return post;
     }
     public async Task InsertPost(Post post)
@@ -46,7 +46,7 @@ namespace SocialMedia.Infraestructure.Repositories
     }
     public async Task <bool> UpdatePost(Post post)
     {
-      var currentPost = await GetPost(post.PostId);
+      var currentPost = await GetPost(post.Id);
       currentPost.Date = post.Date;
       currentPost.Description = post.Description;
       currentPost.Image = post.Image;

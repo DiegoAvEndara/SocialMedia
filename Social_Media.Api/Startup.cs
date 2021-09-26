@@ -46,9 +46,12 @@ namespace Social_Media.Api
       services.AddDbContext<SocialMediaContext>(options =>
         options.UseSqlServer(Configuration.GetConnectionString("SocialMedia")));
       //Injección de dependencias (PostRepository o PostMongoRepository), indica que 
-      services.AddTransient<IPostRepository, PostRepository>();
+      /*services.AddTransient<IPostRepository, PostRepository>();*/
       services.AddTransient<IPostService, PostService>();
-      services.AddTransient<IUserRepository, UserRepository>();
+     /* services.AddTransient<IUserRepository, UserRepository>();*/
+     //Se eliminan los repositorios del usuario y del post por que estan repetidos ye n su lugar se usa Base repository segun el patrón de diseño GENERIC REPOSITORY
+      services.AddScoped(typeof(IRepository<>), typeof(BaseRepository<>));
+      services.AddTransient<IUnitOfWork, UnitOfWork>();
       services.AddMvc(options =>
       {
         options.Filters.Add<ValidationFilter>();

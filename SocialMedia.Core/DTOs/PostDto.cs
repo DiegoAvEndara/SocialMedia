@@ -7,7 +7,9 @@ namespace SocialMedia.Core.DTOs
 {
   public class PostDto
   {
-    public int PostId { get; set; }
+    //Remplazamos PostId por Id para que fucnione el patrón UnitOfWork
+    //public int PostId { get; set; }
+    public int Id { get; set; }
     public int UserId { get; set; }
     public DateTime? Date { get; set; }
     //Añadimos requerido para contrastar con el controlador

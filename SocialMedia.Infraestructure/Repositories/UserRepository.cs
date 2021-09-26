@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
-
+//Este repositorio está eliminado pero se lo mantiene por propósitos de enseñanza, el repositorio general de ambos es el BaseRepository
 namespace SocialMedia.Infraestructure.Repositories
 {
   public class UserRepository : IUserRepository
@@ -23,7 +23,7 @@ namespace SocialMedia.Infraestructure.Repositories
     }
     public async Task<User> GetUser(int id)
     {
-      var post = await _context.Users.FirstOrDefaultAsync(a => a.UserId == id);
+      var post = await _context.Users.FirstOrDefaultAsync(a => a.Id == id);
       return post;
     }
   }

@@ -6,9 +6,9 @@
 
 namespace SocialMedia.Core.Entities
 {
-  public partial class Comment
+  public partial class Comment : BaseEntity
     {
-        public int CommentId { get; set; }
+       /* public int CommentId { get; set; } Se elimina debido a que ahora se pasa a heredar ésta propiedad de BaseEntity*/
         public int PostId { get; set; }
         public int UserId { get; set; }
         public string Description { get; set; }

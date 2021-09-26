@@ -11,10 +11,17 @@ namespace SocialMedia.Infraestructure.Data.Configuration
   {
     public void Configure(EntityTypeBuilder<Comment> builder)
     {
-      builder.ToTable("Comentario");
+      /*builder.ToTable("Comentario");
       builder.HasKey(e => e.CommentId);
 
       builder.Property(e => e.CommentId)
+        .HasColumnName("IdComentario")
+        .ValueGeneratedNever();*/
+
+      builder.ToTable("Comentario");
+      builder.HasKey(e => e.Id);
+
+      builder.Property(e => e.Id)
         .HasColumnName("IdComentario")
         .ValueGeneratedNever();
 
