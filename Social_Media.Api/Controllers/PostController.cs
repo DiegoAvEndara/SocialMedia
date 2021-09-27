@@ -25,9 +25,11 @@ namespace Social_Media.Api.Controllers
       this._mapper = mapper;
     }
     [HttpGet]
-    public async Task<IActionResult> GetPosts()
+    public IActionResult GetPosts()
     {
-      var posts = await _postService.GetPosts();
+      //Según el patrón unitOfWork posts ya no sería asíncrono ya que la clase PostServices se encarga de eso
+      var posts =  _postService.GetPosts();
+      //Una vez quitamos el await en post, vemos que no es neceario que la clase tenga async Task y lo quitalmos
       /*var postsDto = posts.Select(x => new PostDto
       {
         PostId = x.PostId,

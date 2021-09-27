@@ -1,7 +1,9 @@
 ﻿using SocialMedia.Core.Entities;
+using SocialMedia.Core.Exceptions;
 using SocialMedia.Core.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -46,28 +48,49 @@ namespace SocialMedia.Core.Services
       
     }
 
-    public async Task<IEnumerable<Post>> GetPosts()
+    //public async Task<IEnumerable<Post>> GetPosts()
+    //{
+    //  return await _unitOfWork.PostRepository.GetAll();
+    //}
+    public IEnumerable<Post> GetPosts()
     {
-      return await _unitOfWork.PostRepository.GetAll();
+      return _unitOfWork.PostRepository.GetAll();
     }
-
     public async Task InsertPost(Post post)
     {
       var user = await _unitOfWork.UserRepository.GetById(post.UserId);
       if (user == null)
       {
-        throw new Exception("User doesn't exist");
+        throw new BussinesException("User doesn't exist");
+      }
+      //Añadimos la lógica para insertar los post: cuando se tenga menos de 10 solo se puede insertar 1
+      var userPost = await _unitOfWork.PostRepository.GetPostsByUser(post.UserId);
+      if (userPost.Count() < 10)
+      {
+        var lastPost = userPost.OrderByDescending(x => x.Date).FirstOrDefault();
+        if ((DateTime.Now - lastPost.Date).TotalDays < 7)
+        {
+          throw new BussinesException("You are not able to publish more posts until reach 10.");
+        }
       }
       if (post.Description.Contains("Sexo"))
       {
-        throw new Exception("Contenido no permitido");
+        throw new BussinesException("Contenido no permitido");
       }
       await _unitOfWork.PostRepository.Add(post);
+      await _unitOfWork.SaveChangesAsync();
     }
 
+    //public async Task<bool> UpdatePost(Post post)
+    //{
+    //  await _unitOfWork.PostRepository.Update(post);
+    //  return true;
+    //}
     public async Task<bool> UpdatePost(Post post)
     {
-      await _unitOfWork.PostRepository.Update(post);
+      _unitOfWork.PostRepository.Update(post);
+      //Ahora salvamos los cambios de forma asíncrona delegando entoncs a ésta clase el patrón UnitOf Work
+      await _unitOfWork.SaveChangesAsync();
       return true;
     }
   }

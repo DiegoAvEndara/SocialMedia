@@ -11,14 +11,18 @@ namespace SocialMedia.Infraestructure.Repositories
   public class UnitOfWork : IUnitOfWork
   {
     private readonly SocialMediaContext _context;
-    private readonly IRepository<Post> _postRepository;
+    //Ya no usaremos el IRepository<Post> por que en UnitOfWork está configurado el IPostRepository
+    //private readonly IRepository<Post> _postRepository;
+    private readonly IPostRepository _postRepository;
     private readonly IRepository<User> _userRepository;
     private readonly IRepository<Comment> _commentRepository;
     public UnitOfWork(SocialMediaContext context)
     {
       this._context = context;
     }
-    public IRepository<Post> PostRepository => _postRepository ?? new BaseRepository<Post>(_context);
+    //Ya que estamos usando otra interfaz cambiamos el new BaseRepository<Post>(_context); por PostRepository(_context);
+    //Cambiamos el IRepository<Post> por IPostRepository
+    public IPostRepository PostRepository => _postRepository ?? new PostRepository(_context);
 
     public IRepository<User> UserRepository => _userRepository ?? new BaseRepository<User>(_context);
 

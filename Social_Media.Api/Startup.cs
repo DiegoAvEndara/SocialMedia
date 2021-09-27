@@ -33,7 +33,9 @@ namespace Social_Media.Api
     public void ConfigureServices(IServiceCollection services)
     {
       services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-      services.AddControllers().AddNewtonsoftJson(options =>
+      services.AddControllers(options => 
+      //Agregamos un GlobalExceptionFilter que creamos para controlar las excepciones y que no nos salga un mensaje innecesariamente largo
+      options.Filters.Add<GlobalExceptionFilter>()).AddNewtonsoftJson(options =>
       {
         options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
       })
