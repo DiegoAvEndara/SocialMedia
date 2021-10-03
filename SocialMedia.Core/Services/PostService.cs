@@ -1,6 +1,8 @@
-﻿using SocialMedia.Core.Entities;
+﻿using SocialMedia.Core.CustomEntities;
+using SocialMedia.Core.Entities;
 using SocialMedia.Core.Exceptions;
 using SocialMedia.Core.Interfaces;
+using SocialMedia.Core.QueryFilter;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -52,9 +54,26 @@ namespace SocialMedia.Core.Services
     //{
     //  return await _unitOfWork.PostRepository.GetAll();
     //}
-    public IEnumerable<Post> GetPosts()
+    //public IEnumerable<Post> GetPosts(PostQueryFilter filters)
+    public PaginationList<Post> GetPosts(PostQueryFilter filters)
     {
-      return _unitOfWork.PostRepository.GetAll();
+      //Para filtrar los conveniente es hacerlo a partir de una sola consulta a la base de datos con entity framework, desglosando de ésta multiples consultas
+      var posts = _unitOfWork.PostRepository.GetAll();
+      if (filters.UserId!= null)
+      {
+        posts = posts.Where(x => x.UserId == filters.UserId);
+      }
+      if (filters.Date != null)
+      {
+        posts = posts.Where(x => x.Date.ToShortDateString() == filters.Date?.ToShortDateString());
+      }
+      if (filters.Description != null)
+      {
+        posts = posts.Where(x => x.Description.ToLower().Contains(filters.Description.ToLower()));
+      }
+      //Paginación usando el aproach ,creamos una entidad cn un listado con atributos de paginación
+      var pagedList = PaginationList<Post>.Create(posts, filters.PageNumber, filters.PageSize);
+      return pagedList;
     }
     public async Task InsertPost(Post post)
     {
