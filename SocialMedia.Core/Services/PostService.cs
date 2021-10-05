@@ -1,4 +1,5 @@
-﻿using SocialMedia.Core.CustomEntities;
+﻿using Microsoft.Extensions.Options;
+using SocialMedia.Core.CustomEntities;
 using SocialMedia.Core.Entities;
 using SocialMedia.Core.Exceptions;
 using SocialMedia.Core.Interfaces;
@@ -26,15 +27,19 @@ namespace SocialMedia.Core.Services
     private readonly IRepository<Post> _postRepository;
     private readonly IRepository<User> _userRepository;*/
     private readonly IUnitOfWork _unitOfWork;
+    //Para la paginación cuyos valores importamos desde el appsettings
+    private readonly PaginationOptions _paginationOptions;
     /* Cambiamos la lógica para solo recibir unitOfWork en lugar de IRepository
     public PostService(IRepository<Post> postRepository, IRepository<User> userRepository)
     {
       _postRepository = postRepository;
       _userRepository = userRepository;
     }*/
-    public PostService(IUnitOfWork unitOfWork)
+    public PostService(IUnitOfWork unitOfWork, IOptions<PaginationOptions> options)
     {
       this._unitOfWork = unitOfWork;
+      //Se insertó IOptions para que nos permita escoger opciones de PaginationOptions, para utilizar sus propiedades atravez de toda nuestra aplicación
+      _paginationOptions = options.Value;
     }
     public async Task<bool> DeletePost(int id)
     {
@@ -57,6 +62,10 @@ namespace SocialMedia.Core.Services
     //public IEnumerable<Post> GetPosts(PostQueryFilter filters)
     public PaginationList<Post> GetPosts(PostQueryFilter filters)
     {
+      //Agregamos la lógica para las paginaciones automáticas, para usar el NextPageUrl y el PreviousPageUrl
+      filters.PageNumber = filters.PageNumber == 0? _paginationOptions.DefaultPageNumber : filters.PageNumber;
+      //En lugarde usar valres quemados(hardcodeados) usaremos los valores creados para la paginación
+      filters.PageSize = filters.PageSize == 0? _paginationOptions.DefaultPageSize : filters.PageSize;
       //Para filtrar los conveniente es hacerlo a partir de una sola consulta a la base de datos con entity framework, desglosando de ésta multiples consultas
       var posts = _unitOfWork.PostRepository.GetAll();
       if (filters.UserId!= null)

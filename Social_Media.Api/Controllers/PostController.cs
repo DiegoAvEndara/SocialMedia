@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Social_Media.Api.Responses;
@@ -8,10 +7,8 @@ using SocialMedia.Core.DTOs;
 using SocialMedia.Core.Entities;
 using SocialMedia.Core.Interfaces;
 using SocialMedia.Core.QueryFilter;
-using SocialMedia.Infraestructure.Repositories;
-using System;
+using SocialMedia.Infraestructure.Intefaces;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -23,16 +20,20 @@ namespace Social_Media.Api.Controllers
   {
     public readonly IPostService _postService;
     private readonly IMapper _mapper;
-    public PostController(IPostService postService, IMapper mapper)
+    private readonly IUriService _uriService;
+    public PostController(IPostService postService, IMapper mapper, IUriService uriService)
     {
       this._postService = postService;
       this._mapper = mapper;
+      this._uriService = uriService;
     }
     //Segun los criterios de filtrado, se debe poder hacerlo a parir del usuario, fecha o descripción
     //Deberíamos recibir los filtros int? userId, DateTime? date, string description pero en su lugar recibiremos un objeto
     //Al momento de mapear los objetos lo normal es definirlos pero como usaremos los mismos nombres no es necesario
     //El FromQuery indica que al momento de recibir los parámetros lo hará por la URL(FromQUery)
-    [HttpGet]
+    [HttpGet (Name = nameof(GetPosts))]
+    [ProducesResponseType((int)HttpStatusCode.OK)]
+    [ProducesResponseType((int)HttpStatusCode.BadRequest)]
     public IActionResult GetPosts([FromQuery]PostQueryFilter filters)
     {
       //Según el patrón unitOfWork posts ya no sería asíncrono ya que la clase PostServices se encarga de eso
@@ -47,16 +48,23 @@ namespace Social_Media.Api.Controllers
         UserId = x.UserId
       });*/
       var postsDto = _mapper.Map<IEnumerable<PostDto>>(posts);
-      var response = new ApiResponse<IEnumerable<PostDto>>(postsDto);
       //Construimos los metadatos que enviaremos por el header
-      var metadata = new
+      var metadata = new Metadata
       {
-        posts.TotalCount,
-        posts.PageSize,
-        posts.CurrentPage,
-        posts.TotalPages,
-        posts.HasNextPage,
-        posts.HasPreviousPage
+        TotalCount = posts.TotalCount,
+        PageSize = posts.PageSize,
+        CurrentPage = posts.CurrentPage,
+        TotalPages = posts.TotalPages,
+        HasNextPage = posts.HasNextPage,
+        HasPreviouPage = posts.HasPreviousPage,
+        //Se cambia el api/Post por el método Url.RouteUrl() que resuelve ésta parate de la url
+        //NextPageUrl = _uriService.GetPostPaginationUri(filters, "/api/Post").ToString()
+        NextPageUrl = _uriService.GetPostPaginationUri(filters, Url.RouteUrl(nameof(GetPosts))).ToString(),
+        PreviousPageUrl = _uriService.GetPostPaginationUri(filters, Url.RouteUrl(nameof(GetPosts))).ToString()
+      };
+      var response = new ApiResponse<IEnumerable<PostDto>>(postsDto)
+      {
+        Meta = metadata
       };
       //Serialize devuelve un texto en formato json
       Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
@@ -77,7 +85,7 @@ namespace Social_Media.Api.Controllers
       };*/
       var postDto = _mapper.Map<PostDto>(post);
       var response = new ApiResponse<PostDto>(postDto);
-      return Ok(response);
+      return Ok(response); 
     }
     [HttpPost]
     public async Task<IActionResult> Post(PostDto postDto)
