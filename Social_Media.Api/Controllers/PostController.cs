@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 
 namespace Social_Media.Api.Controllers
 {
+  [Produces("application/json")]
   [Route("api/[controller]")]
   [ApiController]
   public class PostController : ControllerBase
@@ -31,8 +32,13 @@ namespace Social_Media.Api.Controllers
     //Deberíamos recibir los filtros int? userId, DateTime? date, string description pero en su lugar recibiremos un objeto
     //Al momento de mapear los objetos lo normal es definirlos pero como usaremos los mismos nombres no es necesario
     //El FromQuery indica que al momento de recibir los parámetros lo hará por la URL(FromQUery)
+    /// <summary>
+    /// Retrieve all posts
+    /// </summary>
+    /// <param name="filters">Filters to apply</param>
+    /// <returns></returns>
     [HttpGet (Name = nameof(GetPosts))]
-    [ProducesResponseType((int)HttpStatusCode.OK)]
+    [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(ApiResponse<IEnumerable<PostDto>>))]
     [ProducesResponseType((int)HttpStatusCode.BadRequest)]
     public IActionResult GetPosts([FromQuery]PostQueryFilter filters)
     {

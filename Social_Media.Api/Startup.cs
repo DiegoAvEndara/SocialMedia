@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.OpenApi.Models;
 using SocialMedia.Core.CustomEntities;
 using SocialMedia.Core.Interfaces;
 using SocialMedia.Core.Services;
@@ -15,6 +16,8 @@ using SocialMedia.Infraestructure.Intefaces;
 using SocialMedia.Infraestructure.Repositories;
 using SocialMedia.Infraestructure.Services;
 using System;
+using System.IO;
+using System.Reflection;
 
 namespace Social_Media.Api
 {
@@ -67,7 +70,15 @@ namespace Social_Media.Api
         var absoluteUri = string.Concat(request.Scheme, "://", request.Host.ToUriComponent());
         return new UriService(absoluteUri);
       });
-
+      //Para empezar a usar Swagger, además necesitamos agregar a nivel de filtro un app.UseSwagger
+      services.AddSwaggerGen(doc=>
+      {
+        doc.SwaggerDoc("v1", new OpenApiInfo { Title = "Social Media Api", Version = "v1" });
+        //Para poder generar la documentación de swagger importamos un Assembly, luego añadimos una dirección de un xml a los comentarios de swagger
+        var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+        var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+        doc.IncludeXmlComments(xmlPath);
+      });
       services.AddMvc(options =>
       {
         options.Filters.Add<ValidationFilter>();
@@ -86,6 +97,14 @@ namespace Social_Media.Api
       }
 
       app.UseHttpsRedirection();
+      //Para usar swagger
+      app.UseSwagger();
+
+      app.UseSwaggerUI(options =>
+      {
+        options.SwaggerEndpoint("/swagger/v1/swagger.json", "Social Media API v1");
+        options.RoutePrefix = string.Empty;
+      });
 
       app.UseRouting();
 
