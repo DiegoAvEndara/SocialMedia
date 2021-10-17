@@ -1,0 +1,1 @@
+# This project is base on REST API services for a Social Media services, we will work with ASP, C#, and deployed in an Azure server.
