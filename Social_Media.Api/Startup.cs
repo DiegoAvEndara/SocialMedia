@@ -123,8 +123,10 @@ namespace Social_Media.Api
 
       app.UseSwaggerUI(options =>
       {
-        options.SwaggerEndpoint("/swagger/v1/swagger.json", "Social Media API v1");
-        options.RoutePrefix = string.Empty;
+        options.SwaggerEndpoint("../swagger/v1/swagger.json", "Social Media API v1");
+        //Para configurar que swagger rutee correctamente es necesario aumentarle los ../ ya que por lo general swagger empieza en la carpeta raiz pero al publicarlo, todo se mueve a sus carpetas
+        //options.SwaggerEndpoint("/swagger/v1/swagger.json", "Social Media API v1");
+        //options.RoutePrefix = string.Empty;
       });
 
       app.UseRouting();

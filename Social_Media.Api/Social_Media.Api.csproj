@@ -6,6 +6,9 @@
 	<PropertyGroup>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<NoWarn>;1591</NoWarn>
+		<StartupObject></StartupObject>
+		<ApplicationIcon />
+		<OutputType>Exe</OutputType>
 	</PropertyGroup>
   <ItemGroup>
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1" />
