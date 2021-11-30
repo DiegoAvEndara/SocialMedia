@@ -31,10 +31,71 @@ namespace SocialMedia.Infraestructure.Repositories
       await Task.Delay(10);
       return posts;
     }*/
-    public async Task<IEnumerable<Publicacion>> GetPosts()
+    public async Task<IEnumerable<Post>> GetPosts()
     {
-      var posts = await _context.Publicacion.ToListAsync();
+      var posts = await _context.Posts.ToListAsync();
       return posts;
+    }
+    public async Task<Post> GetPost(int id)
+    {
+      var post = await _context.Posts.FirstOrDefaultAsync(a => a.Id == id);
+      return post;
+    }
+    public async Task InsertPost(Post post)
+    {
+      _context.Posts.Add(post);
+      await _context.SaveChangesAsync();
+    }
+    public async Task<bool> UpdatePost(Post post)
+    {
+      var currentPost = await GetPost(post.Id);
+      currentPost.Date = post.Date;
+      currentPost.Description = post.Description;
+      currentPost.Image = post.Image;
+      int rows = await _context.SaveChangesAsync();
+      return rows > 0;
+    }
+    public async Task<bool> DeletePost(int id)
+    {
+      var currentPost = await GetPost(id);
+      _context.Posts.Remove(currentPost);
+      int rows = await _context.SaveChangesAsync();
+      return rows > 0;
+    }
+
+    public Task<IEnumerable<Post>> GetPostByUser(int userId)
+    {
+      throw new NotImplementedException();
+    }
+
+    public IEnumerable<Post> GetAll()
+    {
+      throw new NotImplementedException();
+    }
+
+    public Task<Post> GetById(int id)
+    {
+      throw new NotImplementedException();
+    }
+
+    public Task Add(Post entity)
+    {
+      throw new NotImplementedException();
+    }
+
+    public void Update(Post entity)
+    {
+      throw new NotImplementedException();
+    }
+
+    public Task Delete(int id)
+    {
+      throw new NotImplementedException();
+    }
+
+    public Task<IEnumerable<Post>> GetPostsByUser(int userId)
+    {
+      throw new NotImplementedException();
     }
   }
 }
