@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using SocialMedia.Core.Entities;
@@ -24,6 +25,8 @@ namespace SocialMedia.Infraestructure.Data
         public virtual DbSet<Comment> Comments { get; set; }
         public virtual DbSet<Post> Posts { get; set; }
         public virtual DbSet<User> Users { get; set; }
+
+        public virtual DbSet<Security> Securities { get; set; }
     /*
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -34,12 +37,14 @@ namespace SocialMedia.Infraestructure.Data
             }
         }
     */
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {/*
       modelBuilder.ApplyConfiguration(new CommentConfiguration());
       modelBuilder.ApplyConfiguration(new PostConfiguration());
       modelBuilder.ApplyConfiguration(new UserConfiguration());
-
+      */
+      //Configuramos el modelBuilder a nivel de assembly, para no estar registrando los modelos uno por uno independientemente
+      modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
       /*OnModelCreatingPartial(modelBuilder);*/
     }
     /*

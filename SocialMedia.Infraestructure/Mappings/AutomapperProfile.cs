@@ -13,6 +13,7 @@ namespace SocialMedia.Infraestructure.Mappings
     {
       CreateMap<Post, PostDto>();
       CreateMap<PostDto, Post>();
+      CreateMap<Security, SecurityDto>().ReverseMap();//Hace lo mismo pero también en sentido contrario
     }
   }
 }
